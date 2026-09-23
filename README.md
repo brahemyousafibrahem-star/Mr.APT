@@ -923,10 +923,6 @@ td{
 <script>
 "use strict";
 
-/* =========================================================
-   أدوات عامة
-========================================================= */
-
 const $ = id => document.getElementById(id);
 
 function safeJSON(value, fallback){
@@ -950,43 +946,9 @@ function escapeHTML(value){
     .replace(/'/g,"&#039;");
 }
 
-function validTelegramURL(url){
-  try{
-    const u = new URL(url);
-    return u.protocol === "https:" && u.hostname === "t.me";
-  }catch{
-    return false;
-  }
-}
-
-async function sha256(text){
-  const data = new TextEncoder().encode(text);
-  const hash = await crypto.subtle.digest("SHA-256",data);
-  return [...new Uint8Array(hash)]
-    .map(x=>x.toString(16).padStart(2,"0"))
-    .join("");
-}
-
-function randomCode(){
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const bytes = new Uint8Array(12);
-  crypto.getRandomValues(bytes);
-
-  let out = "";
-  for(let i=0;i<bytes.length;i++){
-    out += alphabet[bytes[i] % alphabet.length];
-    if((i+1)%4===0 && i!==bytes.length-1) out += "-";
-  }
-  return out;
-}
-
 function notify(message){
   alert(message);
 }
-
-/* =========================================================
-   المنهج
-========================================================= */
 
 const CURRICULUM = [
   {
@@ -999,162 +961,38 @@ const CURRICULUM = [
         mandatory:true
       }
     ]
-  },
-  {
-    phase:"المرحلة ١ — الأساسيات",
-    items:[
-      {
-        id:"net",
-        type:"module",
-        title:"🌐 أساسيات الشبكات"
-      },
-      {
-        id:"linux",
-        type:"module",
-        title:"🐧 أساسيات Linux"
-      }
-    ]
-  },
-  {
-    phase:"المرحلة ٢ — مبادئ الأمن",
-    items:[
-      {
-        id:"sec",
-        type:"module",
-        title:"🛡️ مبادئ الأمن السيبراني"
-      },
-      {
-        id:"crypto",
-        type:"module",
-        title:"🔐 أساسيات التشفير"
-      }
-    ]
-  },
-  {
-    phase:"مسار الصياد 🔒",
-    items:[
-      {
-        id:"offense",
-        type:"locked",
-        title:"🎯 الهجوم الأخلاقي واختبار الاختراق",
-        tier:"hunter"
-      },
-      {
-        id:"defense",
-        type:"locked",
-        title:"🛰️ الدفاع والاستجابة للحوادث",
-        tier:"hunter"
-      }
-    ]
-  },
-  {
-    phase:"مسار الشبح 🔒",
-    items:[
-      {
-        id:"reverse",
-        type:"locked",
-        title:"🧩 الهندسة العكسية وتحليل البرمجيات",
-        tier:"ghost"
-      },
-      {
-        id:"bugbounty",
-        type:"locked",
-        title:"🔎 اكتشاف الثغرات وبناء تقاريرها",
-        tier:"ghost"
-      }
-    ]
-  },
-  {
-    phase:"أدوات الأكاديمية",
-    items:[
-      {
-        id:"freeterm",
-        type:"terminal",
-        title:"💻 الترمنال التدريبي"
-      },
-      {
-        id:"glossary",
-        type:"glossary",
-        title:"📖 قاموس المصطلحات"
-      },
-      {
-        id:"cert",
-        type:"certpage",
-        title:"🎓 شهاداتي"
-      }
-    ]
   }
 ];
 
-/* =========================================================
-   الدروس المجانية
-========================================================= */
-
 const MODULES = {
+  ethics:{
+    title:"أخلاقيات وقانونية الأمن السيبراني",
+    lead:"أول درس في الأكاديمية. الهدف أن يتعلم الطالب الفرق بين التعلم الأمني المصرح به وبين الوصول غير المصرح به.",
+    lessons:[
+      {
+        title:"1 — القاعدة الذهبية في الأمن السيبراني",
+        body:`
+          <p>الأمن السيبراني ليس مجرد معرفة الأدوات. أهم مهارة هي معرفة <b>متى وأين وكيف</b> تستخدم المعرفة.</p>
+          <div class="note">
+            القاعدة الذهبية: امتلك تصريحًا واضحًا قبل اختبار أي نظام لا تملكه.
+          </div>
+        `
+      }
+    ]
+  }
+};
 
-ethics:{
-  title:"أخلاقيات وقانونية الأمن السيبراني",
-  lead:"أول درس في الأكاديمية. الهدف أن يتعلم الطالب الفرق بين التعلم الأمني المصرح به وبين الوصول غير المصرح به.",
-  lessons:[
-    {
-      title:"1 — القاعدة الذهبية في الأمن السيبراني",
-      body:`
-        <p>الأمن السيبراني ليس مجرد معرفة الأدوات. أهم مهارة هي معرفة <b>متى وأين وكيف</b> تستخدم المعرفة.</p>
-
-        <p>أي اختبار أمني حقيقي يجب أن يكون داخل نطاق مصرح به بوضوح، مثل مختبر تعليمي، جهاز شخصي، بيئة CTF، أو نظام توجد موافقة مكتوبة لاختباره.</p>
-
-        <div class="note">
-          القاعدة الذهبية: امتلك تصريحًا واضحًا قبل اختبار أي نظام لا تملكه.
-        </div>
-
-        <h4>لماذا التصريح مهم؟</h4>
-        <ul>
-          <li>يحدد الأنظمة المسموح باختبارها.</li>
-          <li>يحدد الفترة الزمنية للاختبار.</li>
-          <li>يحدد أنواع الاختبارات المسموحة.</li>
-          <li>يحدد طريقة التعامل مع البيانات التي تظهر أثناء الاختبار.</li>
-          <li>يمنع الخلط بين التدريب الأمني والوصول غير المصرح به.</li>
-        </ul>
-
-        <div class="warning">
-          في الأكاديمية سيتم استخدام أمثلة تعليمية ومحاكاة وبيئات تدريبية. لا تستخدم المعرفة المكتسبة على حسابات أو أجهزة أو مواقع أشخاص آخرين.
-        </div>
-      `
-    },
-    {
-      title:"2 — نطاق الاختبار وقواعد الاشتباك",
-      body:`
-        <p>في الاختبارات الاحترافية يوجد مفهوم مهم يسمى <b>Scope</b>، أي النطاق المسموح باختباره.</p>
-
-        <p>قد يحدد العميل مثلًا تطبيقًا معينًا أو بيئة تجريبية محددة. وجود تصريح لا يعني أن كل أنظمة الشركة أصبحت متاحة للاختبار.</p>
-
-        <h4>قواعد مهمة</h4>
-        <ul>
-          <li>التزم بالنطاق المحدد.</li>
-          <li>لا تجمع بيانات لا تحتاج إليها.</li>
-          <li>لا تحاول الوصول إلى حسابات مستخدمين حقيقيين.</li>
-          <li>لا توقف خدمة أو تغير بيانات إنتاجية.</li>
-          <li>احتفظ بسجل واضح لما فعلته داخل المختبر.</li>
-        </ul>
-
-        <div class="codebox">TRAINING SCOPE
-Target: training-lab.example
-Environment: Authorized Lab
-Production Systems: OUT OF SCOPE
-Real User Data: PROHIBITED</div>
-      `
-    },
-    {
-      title:"3 — المسؤولية المهنية وكتابة التقرير",
-      body:`
-        <p>المختبر الأمني الاحترافي لا ينتهي بمجرد اكتشاف مشكلة. يجب توثيقها بطريقة تساعد المسؤول عن النظام على فهمها وإصلاحها.</p>
-
-        <h4>التقرير الجيد يحتوي على:</h4>
-        <ul>
-          <li>عنوان واضح للمشكلة.</li>
-          <li>وصف مختصر.</li>
-          <li>الأصل أو المكوّن المتأثر.</li>
-          <li>الأثر الأمني المحتمل.</li>
-          <li>طريقة آمنة لإعادة إنتاج المشكلة داخل بيئة الاختبار.</li>
-          <li>اقتراح إصلاح.</li>
-          <
+document.addEventListener("DOMContentLoaded", () => {
+  const contentEl = $("content");
+  if(contentEl && MODULES.ethics) {
+    contentEl.innerHTML = `
+      <div class="hero">
+        <h1>${MODULES.ethics.title}</h1>
+        <p>${MODULES.ethics.lead}</p>
+      </div>
+    `;
+  }
+});
+</script>
+</body>
+</html>
